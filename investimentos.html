@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Investimentos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
+</head>
+
+<body>
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo-section">
+                <div style="width: 46px; min-width: 46px; height: 46px; display: flex; align-items: center; justify-content: center;"><img src="logo.webp" alt="Logo" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 10px rgba(124, 107, 255, 0.5));"></div>
+                <span class="logo-text">Performance</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <div class="icon-wrapper"><i data-lucide="bar-chart-3"></i></div>
+                    <span class="nav-text">Financeiro</span>
+                </a>
+                <a href="cartoes.html" class="nav-item">
+                    <div class="icon-wrapper"><i data-lucide="credit-card"></i></div>
+                    <span class="nav-text">Cartões</span>
+                </a>
+                <a href="metas.html" class="nav-item">
+                    <div class="icon-wrapper"><i data-lucide="goal"></i></div>
+                    <span class="nav-text">Metas</span>
+                </a>
+                <a href="investimentos.html" class="nav-item active">
+                    <div class="icon-wrapper"><i data-lucide="landmark"></i></div>
+                    <span class="nav-text">Investimentos</span>
+                </a>
+                <a href="cadastro.html" class="nav-item">
+                    <div class="icon-wrapper"><i data-lucide="file-plus"></i></div>
+                    <span class="nav-text">Cadastro</span>
+                </a>
+                <a href="dados.html" class="nav-item">
+                    <div class="icon-wrapper"><i data-lucide="database"></i></div>
+                    <span class="nav-text">Meus Dados</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-wrapper">
+            <header class="top-header">
+                <div class="header-left">
+                    <h1>Dashboard <span class="header-divider">|</span> <span class="header-subtitle">Investimentos</span></h1>
+                </div>
+                <div class="header-right">
+                    <span class="user-name">Usuário</span>
+                    <div class="user-avatar">
+                        <img src="https://ui-avatars.com/api/?name=Rodrigo&background=2B2B2B&color=fff&rounded=true&bold=true" alt="Rodrigo">
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-scroll dash-layout">
+                
+                <div class="kpi-row" style="grid-template-columns: 1fr 1fr;">
+                    <!-- Card 1: Total Investido (Aportes) -->
+                    <div class="kpi-card clay-card gold-glow">
+                        <div class="kpi-icon-box"><i data-lucide="landmark"></i></div>
+                        <div class="kpi-body">
+                            <span class="kpi-label">Total Investido (Aportes)</span>
+                            <span class="kpi-value" id="inv-total-investido">R$ 0,0</span>
+                        </div>
+                    </div>
+                    <!-- Card 2: Total Acumulado (Ganho) -->
+                    <div class="kpi-card clay-card green-glow">
+                        <div class="kpi-icon-box"><i data-lucide="piggy-bank"></i></div>
+                        <div class="kpi-body">
+                            <span class="kpi-label">Total Ganho Com Investimentos</span>
+                            <span class="kpi-value" id="inv-total-acumulado">R$ 0,0</span>
+                            <span class="kpi-growth" id="inv-ganho-label" style="margin-top: 5px;">Rendimento Líquido: R$ 0,0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-row-2" style="grid-template-columns: 1fr;">
+                    <!-- Barras Verticais para tipo de investimento com Filtro -->
+                    <div class="chart-card glass-card">
+                        <div class="chart-head">
+                            <h3>Valor por Tipo de Investimento</h3>
+                            <div class="chart-filters" data-target="inv">
+                                <button class="fbtn active" data-f="todos">Todos</button>
+                                <button class="fbtn" data-f="Renda Fixa">Renda Fixa</button>
+                                <button class="fbtn" data-f="Renda Variável">Renda Variável</button>
+                            </div>
+                        </div>
+                        <div id="chart-inv-barras" style="width:100%;height:350px;"></div>
+                    </div>
+                </div>
+
+                <div class="chart-row-2" style="grid-template-columns: 1fr 1fr;">
+                    <!-- Funnel Renda Fixa -->
+                    <div class="chart-card glass-card">
+                        <div class="chart-head">
+                            <h3>Top 10: Renda Fixa</h3>
+                        </div>
+                        <div id="chart-inv-funil-fixa" style="width:100%;height:350px;"></div>
+                    </div>
+                    <!-- Funnel Renda Variável -->
+                    <div class="chart-card glass-card">
+                        <div class="chart-head">
+                            <h3>Top 10: Renda Variável</h3>
+                        </div>
+                        <div id="chart-inv-funil-var" style="width:100%;height:350px;"></div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+
+</html>

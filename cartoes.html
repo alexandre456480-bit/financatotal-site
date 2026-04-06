@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Cartões</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
+</head>
+
+<body>
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo-section">
+                <div style="width: 46px; min-width: 46px; height: 46px; display: flex; align-items: center; justify-content: center;"><img src="logo.webp" alt="Logo" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 10px rgba(124, 107, 255, 0.5));"></div>
+                <span class="logo-text">Performance</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <div class="icon-wrapper"><i data-lucide="bar-chart-3"></i></div>
+                    <span class="nav-text">Financeiro</span>
+                </a>
+                <a href="cartoes.html" class="nav-item active">
+                    <div class="icon-wrapper"><i data-lucide="credit-card"></i></div>
+                    <span class="nav-text">Cartões</span>
+                </a>
+                <a href="metas.html" class="nav-item">
+                    <div class="icon-wrapper"><i data-lucide="goal"></i></div>
+                    <span class="nav-text">Metas</span>
+                </a>
+                <a href="investimentos.html" class="nav-item">
+                    <div class="icon-wrapper"><i data-lucide="landmark"></i></div>
+                    <span class="nav-text">Investimentos</span>
+                </a>
+                <a href="cadastro.html" class="nav-item">
+                    <div class="icon-wrapper"><i data-lucide="file-plus"></i></div>
+                    <span class="nav-text">Cadastro</span>
+                </a>
+                <a href="dados.html" class="nav-item">
+                    <div class="icon-wrapper"><i data-lucide="database"></i></div>
+                    <span class="nav-text">Meus Dados</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-wrapper">
+            <header class="top-header">
+                <div class="header-left">
+                    <h1>Dashboard <span class="header-divider">|</span> <span class="header-subtitle">Cartões</span>
+                    </h1>
+                </div>
+                <div class="header-right">
+                    <span class="user-name">Usuário</span>
+                    <div class="user-avatar">
+                        <img src="https://ui-avatars.com/api/?name=Rodrigo&background=2B2B2B&color=fff&rounded=true&bold=true"
+                            alt="Rodrigo">
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-scroll" style="display: grid; grid-template-columns: 2.3fr 1fr; gap: 24px;">
+                <div class="cartoes-col-esq" style="display: flex; flex-direction: column; gap: 28px;">
+
+                <!-- Mastercards -->
+                <div class="mc-row">
+                    <div class="mc-card mc-purple">
+                        <div class="mc-shine"></div>
+                        <div class="mc-top-row">
+                            <i data-lucide="credit-card" class="mc-chip-icon"></i>
+                            <svg class="mc-brand" viewBox="0 0 100 60">
+                                <circle cx="32" cy="30" r="28" fill="#EB001B" opacity="0.85" />
+                                <circle cx="68" cy="30" r="28" fill="#F79E1B" opacity="0.85" />
+                            </svg>
+                        </div>
+                        <div class="mc-number-row">**** **** **** 1234</div>
+                        <div class="mc-bottom-row">
+                            <div><small>TOTAL GASTO   </small><strong id="mc-total-1">R$ 0,0</strong></div>
+                            <div class="mc-right"><small>CARTÃO 1</small><strong></strong></div>
+                        </div>
+                    </div>
+                    <div class="mc-card mc-dark">
+                        <div class="mc-shine"></div>
+                        <div class="mc-top-row">
+                            <i data-lucide="credit-card" class="mc-chip-icon"></i>
+                            <svg class="mc-brand" viewBox="0 0 100 60">
+                                <circle cx="32" cy="30" r="28" fill="#EB001B" opacity="0.85" />
+                                <circle cx="68" cy="30" r="28" fill="#F79E1B" opacity="0.85" />
+                            </svg>
+                        </div>
+                        <div class="mc-number-row">**** **** **** 9876</div>
+                        <div class="mc-bottom-row">
+                            <div><small>TOTAL GASTO   </small><strong id="mc-total-2">R$ 0,0</strong></div>
+                            <div class="mc-right"><small>CARTÃO 2</small><strong></strong></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráfico Evolução -->
+                <div class="chart-card glass-card" style="width:100%;">
+                    <div class="chart-head">
+                        <h3>Despesas de Cartão no Tempo</h3>
+                        <div class="chart-filters" data-target="cartao-evo">
+                            <button class="fbtn active" data-f="dia">Dia</button>
+                            <button class="fbtn" data-f="semana">Sem</button>
+                            <button class="fbtn" data-f="mes">Mês</button>
+                            <button class="fbtn" data-f="ano">Ano</button>
+                        </div>
+                    </div>
+                    <div id="chart-cartao-evo" style="width:100%;height:350px;"></div>
+                </div>
+
+                </div> <!-- Fim col esquerda -->
+                <div class="cartoes-col-dir" style="display: flex; flex-direction: column; gap: 28px;">
+                    <!-- Top 15 Parcelas -->
+                    <div class="chart-card glass-card" style="height: 100%; min-height: 600px;">
+                        <div class="chart-head">
+                            <h3 style="font-weight:600;font-size:1.1rem;">Top 15 Parcelas/Faturas</h3>
+                        </div>
+                        <div id="chart-top15-funil" style="width:100%; height:100%; min-height:500px;"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+
+</html>
