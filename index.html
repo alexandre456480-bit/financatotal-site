@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Financeiro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
+    <script src="auth.js"></script>
+</head>
+
+<body>
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo-section">
+                <div
+                    style="width: 46px; min-width: 46px; height: 46px; display: flex; align-items: center; justify-content: center;">
+                    <img src="logo.webp" alt="Logo"
+                        style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 10px rgba(124, 107, 255, 0.5));">
+                </div>
+                <span class="logo-text">Performance</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item active">
+                    <div class="icon-wrapper"><i data-lucide="bar-chart-3"></i></div>
+                    <span class="nav-text">Financeiro</span>
+                </a>
+                <a href="cartoes.html" class="nav-item">
+                    <div class="icon-wrapper"><i data-lucide="credit-card"></i></div>
+                    <span class="nav-text">Cartões</span>
+                </a>
+                <a href="metas.html" class="nav-item">
+                    <div class="icon-wrapper"><i data-lucide="goal"></i></div>
+                    <span class="nav-text">Metas</span>
+                </a>
+                <a href="investimentos.html" class="nav-item">
+                    <div class="icon-wrapper"><i data-lucide="landmark"></i></div>
+                    <span class="nav-text">Investimentos</span>
+                </a>
+                <a href="cadastro.html" class="nav-item">
+                    <div class="icon-wrapper"><i data-lucide="file-plus"></i></div>
+                    <span class="nav-text">Cadastro</span>
+                </a>
+                <a href="dados.html" class="nav-item">
+                    <div class="icon-wrapper"><i data-lucide="database"></i></div>
+                    <span class="nav-text">Meus Dados</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-bottom" style="margin-top: auto; padding: 20px 16px 0; border-top: 1px solid rgba(255,255,255,0.05); overflow:hidden;">
+                <a href="#" class="nav-item" onclick="localStorage.removeItem('auth_token'); window.location.href='login.html';" style="color: #ff5555;">
+                    <div class="icon-wrapper" style="background: rgba(255,85,85,0.1);"><i data-lucide="log-out" style="color: #ff5555;"></i></div>
+                    <span class="nav-text">Sair / Contas</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-wrapper">
+            <header class="top-header">
+                <div class="header-left">
+                    <h1>Dashboard <span class="header-divider">|</span> <span class="header-subtitle">Financeiro</span>
+                    </h1>
+                </div>
+                <div class="header-right">
+                    <span class="user-name">Usuário
+
+                    </span>
+                    <div class="user-avatar">
+                        <img src="https://ui-avatars.com/api/?name=Rodrigo&background=2B2B2B&color=fff&rounded=true&bold=true"
+                            alt="Rodrigo">
+                    </div>
+                </div>
+            </header>
+
+            <!-- FAB Filtro (Ícone Suspenso) — Fora do scroll container para sobreposição correta -->
+            <div id="filter-fab-wrapper" style="position: sticky; top: 0; z-index: 9999; display: flex; justify-content: flex-end; padding: 12px 40px 0; margin-bottom: -42px; pointer-events: none;">
+                <div style="pointer-events: auto; position: relative;">
+                    <button id="btn-global-filter"
+                        style="background: rgba(18,22,34,0.85); border: 1px solid rgba(0,229,255,0.4); padding: 10px 16px; border-radius: 12px; color: #00E5FF; cursor: pointer; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,229,255,0.15); transition: all 0.3s; font-weight: bold; font-size: 0.85rem;">
+                        <i data-lucide="calendar-search" style="width: 18px; height: 18px;"></i> <span
+                            id="label-global-filter">Filtro de Período</span>
+                    </button>
+                    <!-- Popover do Filtro -->
+                    <div id="global-filter-popup"
+                        style="display: none; position: absolute; top: 120%; right: 0; background: rgba(18,22,34,0.98); border: 1px solid rgba(0,229,255,0.3); padding: 16px; border-radius: 12px; backdrop-filter: blur(16px); z-index: 99999; box-shadow: 0 15px 40px rgba(0,0,0,0.9); min-width: 220px;">
+                        <div style="margin-bottom: 12px;">
+                            <label
+                                style="color: #8B9BB4; font-size: 0.8rem; margin-bottom: 6px; display: block; font-weight: 600;">Mês</label>
+                            <select id="g-filter-month"
+                                style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 8px; border-radius: 6px; outline: none;">
+                                <option value="all">Todo o Período</option>
+                                <option value="01">Janeiro</option>
+                                <option value="02">Fevereiro</option>
+                                <option value="03">Março</option>
+                                <option value="04">Abril</option>
+                                <option value="05">Maio</option>
+                                <option value="06">Junho</option>
+                                <option value="07">Julho</option>
+                                <option value="08">Agosto</option>
+                                <option value="09">Setembro</option>
+                                <option value="10">Outubro</option>
+                                <option value="11">Novembro</option>
+                                <option value="12">Dezembro</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom: 16px;">
+                            <label
+                                style="color: #8B9BB4; font-size: 0.8rem; margin-bottom: 6px; display: block; font-weight: 600;">Ano</label>
+                            <select id="g-filter-year"
+                                style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 8px; border-radius: 6px; outline: none;">
+                                <!-- Options via JS -->
+                            </select>
+                        </div>
+                        <button id="btn-apply-filter"
+                            style="width: 100%; background: linear-gradient(90deg, #00E5FF, #0077FF); border: none; color: white; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: opacity 0.3s;">Aplicar
+                            Filtro</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-scroll dash-layout">
+
+                <!-- KPI Cards -->
+                <div class="kpi-row">
+                    <div class="kpi-card clay-card gold-glow">
+                        <div class="kpi-icon-box"><i data-lucide="wallet"></i></div>
+                        <div class="kpi-body">
+                            <span class="kpi-label">Saldo Total</span>
+                            <span class="kpi-value" id="kpi-saldo">R$ 0,0</span>
+                            <span class="kpi-growth" id="growth-saldo"></span>
+                        </div>
+                    </div>
+                    <div class="kpi-card clay-card green-glow">
+                        <div class="kpi-icon-box"><i data-lucide="badge-dollar-sign"></i></div>
+                        <div class="kpi-body">
+                            <span class="kpi-label">Total Receitas</span>
+                            <span class="kpi-value" id="kpi-receita">R$ 0,0</span>
+                            <span class="kpi-growth" id="growth-receita"></span>
+                        </div>
+                    </div>
+                    <div class="kpi-card clay-card red-glow">
+                        <div class="kpi-icon-box"><i data-lucide="trending-down"></i></div>
+                        <div class="kpi-body">
+                            <span class="kpi-label">Total Despesas</span>
+                            <span class="kpi-value" id="kpi-despesa">R$ 0,0</span>
+                            <span class="kpi-growth" id="growth-despesa"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row: Área + Saldo -->
+                <div class="chart-row-2">
+                    <div class="chart-card glass-card">
+                        <div class="chart-head">
+                            <h3>Receitas vs Despesas</h3>
+                            <div class="chart-filters" data-target="fluxo">
+                                <button class="fbtn active" data-f="dia">Dia</button>
+                                <button class="fbtn" data-f="semana">Sem</button>
+                                <button class="fbtn" data-f="mes">Mês</button>
+                                <button class="fbtn" data-f="ano">Ano</button>
+                            </div>
+                        </div>
+                        <div id="chart-fluxo" style="width:100%;height:320px;"></div>
+                    </div>
+                    <div class="chart-card glass-card">
+                        <div class="chart-head">
+                            <h3>Saldo Acumulado</h3>
+                            <div class="chart-filters" data-target="saldo">
+                                <button class="fbtn active" data-f="dia">Dia</button>
+                                <button class="fbtn" data-f="semana">Sem</button>
+                                <button class="fbtn" data-f="mes">Mês</button>
+                                <button class="fbtn" data-f="ano">Ano</button>
+                            </div>
+                        </div>
+                        <div id="chart-saldo" style="width:100%;height:320px;"></div>
+                    </div>
+                </div>
+
+                <!-- Row: Pizza + Top7 Receita + Top7 Despesa -->
+                <div class="chart-row-3">
+                    <div class="chart-card glass-card">
+                        <div class="chart-head">
+                            <h3>Categorias</h3>
+                            <div class="chart-filters" data-target="cat">
+                                <button class="fbtn active" data-f="Receita">Receita</button>
+                                <button class="fbtn" data-f="Despesa">Despesa</button>
+                            </div>
+                        </div>
+                        <div id="chart-cat" style="width:100%;height:320px;"></div>
+                    </div>
+                    <div class="glass-card chart-card">
+                        <div class="chart-head">
+                            <h3>Top 7 Receitas</h3>
+                            <div class="chart-filters">
+                                <select id="filter-cat-rec"
+                                    style="background: transparent; color: var(--highlight); border: none; outline: none; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
+                                    <option value="todas" style="background: var(--container-bg);">Todas</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="chart-top-rec" style="height: 280px; width: 100%;"></div>
+                    </div>
+                    <div class="glass-card chart-card">
+                        <div class="chart-head">
+                            <h3>Top 7 Despesas</h3>
+                            <div class="chart-filters">
+                                <select id="filter-cat-desp"
+                                    style="background: transparent; color: var(--secondary); border: none; outline: none; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
+                                    <option value="todas" style="background: var(--container-bg);">Todas</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="chart-top-desp" style="height: 280px; width: 100%;"></div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js" defer></script>
+    <script src="dashboard.js" defer></script>
+    <script src="ai-insight.js" defer></script>
+</body>
+
+</html>
